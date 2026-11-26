@@ -13,10 +13,9 @@
  */
 import React, { createContext, useContext, useState } from 'react'
 import { useAuth } from './AuthContext'
+import { API_BASE } from '../utils/backend'
 
 const ShoppingListContext = createContext()
-
-const API_BASE = import.meta.env.VITE_API_BASE || '/api'
 
 /**
  * Thin fetch helper — uses credentials: 'include' so the httpOnly

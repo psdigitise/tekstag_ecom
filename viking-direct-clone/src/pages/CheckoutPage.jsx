@@ -22,7 +22,7 @@ import { fetchAddresses } from '../api'
 import { useBusy } from '../hooks/useBusy'
 import { Check, AlertCircle, MapPin, Plus, User, Phone } from 'lucide-react'
 
-const API_BASE = import.meta.env.VITE_API_BASE || '/api'
+import { API_BASE } from '../utils/backend'
 
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/
 

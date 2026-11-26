@@ -1,25 +1,29 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
+import { BACKEND_URL } from './backend.config.js'
 
-export default defineConfig(({ mode }) => ({
-  plugins: [react()],
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '')
+  // The dev server forwards to the address in backend.config.js. To use another
+  // one (for example a local Django), set BACKEND_URL in .env.
+  const proxy = { target: env.BACKEND_URL || BACKEND_URL, changeOrigin: true, secure: false }
+  // The built website calls this address, so the security policy must allow it.
+  const allowed = env.VITE_BACKEND_URL || BACKEND_URL
+
+  return {
+  plugins: [
+    react(),
+    { name: 'backend-url', transformIndexHtml: html => html.replaceAll('%BACKEND_URL%', allowed) },
+  ],
 
   // ── Development proxy ───────────────────────────────────────────────────────
-  // Forwards /api requests to Django backend on the same origin so that
-  // httpOnly cookies work without CORS (cookies are same-origin in this setup).
+  // Forwards /api and /media to the Django backend, so the browser sees one
+  // origin and httpOnly cookies work without CORS.
   // In production, nginx/reverse-proxy handles this routing.
   server: {
     proxy: {
-      '/api': {
-        target: 'http://localhost:8001',
-        changeOrigin: true,
-        secure: false,
-      },
-      '/media': {
-        target: 'http://localhost:8001',
-        changeOrigin: true,
-        secure: false,
-      },
+      '/api': proxy,
+      '/media': proxy,
     },
   },
 
@@ -37,4 +41,5 @@ export default defineConfig(({ mode }) => ({
     // Drop console/debugger in production only
     drop: mode === 'production' ? ['console', 'debugger'] : [],
   },
-}))
+  }
+})

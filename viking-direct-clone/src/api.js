@@ -5,13 +5,12 @@
  *  - All requests use credentials: 'include' so the httpOnly auth cookie
  *    is sent automatically — no token is ever stored in JavaScript.
  *  - The Authorization header is NEVER used; auth is cookie-only.
- *  - API_BASE defaults to '/api' (same-origin) which works with the Vite dev
- *    proxy and a production nginx reverse-proxy. No hardcoded localhost URLs.
+ *  - The backend address is set in backend.config.js (see utils/backend.js).
  *  - A shared apiFetch() wrapper centralises 401 handling and error parsing
  *    so individual callers don't need to repeat this logic.
  */
 
-const API_BASE = import.meta.env.VITE_API_BASE || '/api'
+import { API_BASE, withBackendMedia, withoutBackendMedia } from './utils/backend'
 
 /**
  * Base fetch wrapper.
@@ -50,6 +49,7 @@ async function request(path, options) {
   const isFormData = options.body instanceof FormData
   const config = {
     ...options,
+    ...(options.body && { body: withoutBackendMedia(options.body) }),
     credentials: 'include', // sends httpOnly auth_token cookie
     headers: isFormData ? {} : {
       'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ async function request(path, options) {
   // 204 No Content — return null instead of trying to parse an empty body
   if (res.status === 204) return null
 
-  return res.json()
+  return withBackendMedia(await res.json())
 }
 
 // ── Products ──────────────────────────────────────────────────────────────────
