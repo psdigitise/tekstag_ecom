@@ -1,0 +1,14 @@
+.DS_Store
+node_modules/
+venv/
+.venv/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+dist/
+media/
+staticfiles/
+.claude/
+*.timestamp-*.mjs

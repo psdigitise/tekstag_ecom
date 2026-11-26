@@ -1,0 +1,77 @@
+{% extends "admin/base_site.html" %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* Viking Theme Colors */
+    :root {
+        --primary: #D52B1E;
+        --secondary: #0066CC;
+        --link-fg: #0066CC;
+        --link-hover-color: #0052A3;
+        --header-color: #ffffff;
+        --header-bg: #D52B1E;
+        --module-bg: #f8f8f8;
+        --default-button-bg: #0066CC;
+        --default-button-hover-bg: #0052A3;
+    }
+
+    #header {
+        background-color: var(--primary);
+        color: var(--header-color);
+        display: flex;
+        align-items: center;
+    }
+    
+    #branding h1 {
+        color: var(--header-color);
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Simple pill UI for branding */
+    #branding h1::before {
+        content: 'V';
+        background-color: white;
+        color: var(--primary);
+        border-radius: 50%;
+        display: inline-flex;
+        width: 32px;
+        height: 32px;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 18px;
+    }
+
+    div.breadcrumbs {
+        background: #b71c1c;
+        color: #ffcdd2;
+    }
+    
+    div.breadcrumbs a {
+        color: white;
+    }
+    
+    .module h2, .module caption, .inline-group h2 {
+        background: var(--primary);
+        color: white;
+    }
+    
+    a:link, a:visited {
+        color: var(--link-fg);
+    }
+    
+    .button, input[type=submit], input[type=button], .submit-row input, a.button {
+        background: var(--default-button-bg);
+        border-radius: 2px;
+        color: white;
+    }
+    
+    .button:hover, input[type=submit]:hover, input[type=button]:hover {
+        background: var(--default-button-hover-bg);
+    }
+</style>
+{% endblock %}
