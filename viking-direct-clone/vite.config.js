@@ -11,35 +11,34 @@ export default defineConfig(({ mode }) => {
   const allowed = env.VITE_BACKEND_URL || BACKEND_URL
 
   return {
-  plugins: [
-    react(),
-    { name: 'backend-url', transformIndexHtml: html => html.replaceAll('%BACKEND_URL%', allowed) },
-  ],
+    plugins: [
+      react(),
+      { name: 'backend-url', transformIndexHtml: html => html.replaceAll('%BACKEND_URL%', allowed) },
+    ],
 
-  // ── Development proxy ───────────────────────────────────────────────────────
-  // Forwards /api and /media to the Django backend, so the browser sees one
-  // origin and httpOnly cookies work without CORS.
-  // In production, nginx/reverse-proxy handles this routing.
-  server: {
-    proxy: {
-      '/api': proxy,
-      '/media': proxy,
+    // ── Development server ──────────────────────────────────────────────────
+    // Forwards /api and /media to the Django backend, so the browser sees one
+    // origin and httpOnly cookies work without CORS.
+    // In production, nginx/reverse-proxy handles this routing.
+    server: {
+      host: '0.0.0.0',   // listen on all interfaces (LAN / Docker access)
+      port: 5173,
+      proxy: {
+        '/api': proxy,
+        '/media': proxy,
+      },
     },
-  },
 
-  // ── Production build hardening ──────────────────────────────────────────────
-  build: {
-    // Remove all console.* and debugger statements from production bundles.
-    // This prevents internal error details and token-related logs from being
-    // visible to users who open DevTools in production.
-    ...(mode === 'production' && {
-      minify: 'esbuild',
-    }),
-  },
+    // ── Production build hardening ──────────────────────────────────────────
+    build: {
+      ...(mode === 'production' && {
+        minify: 'esbuild',
+      }),
+    },
 
-  esbuild: {
-    // Drop console/debugger in production only
-    drop: mode === 'production' ? ['console', 'debugger'] : [],
-  },
+    esbuild: {
+      // Drop console/debugger in production only
+      drop: mode === 'production' ? ['console', 'debugger'] : [],
+    },
   }
 })
